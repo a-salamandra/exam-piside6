@@ -10,7 +10,10 @@ class ServecesInfo(QtCore.QThread):
         self.timeout = timeout
         self.status = None
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Получение информации о запущенных службах, отправка из потока в виде списка
+        """
         self.status = True
         servecesInfo = []
 

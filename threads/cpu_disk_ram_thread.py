@@ -13,7 +13,10 @@ class CPUInfo(QtCore.QThread):
         self.timeout = timeout
         self.status = None
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Получение информации о процессоре, памяти, дисках и отправление в виде словаря.
+        """
         self.status = True
         cpu_name = get_cpu_info()["brand_raw"]
         cpu_number = str(cpu_count())

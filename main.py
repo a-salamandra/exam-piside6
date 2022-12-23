@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QTableWidgetItem
 
 from threads.task_scheduler_thread import TaskSchedulerInfo
@@ -16,7 +16,10 @@ class Window(QtWidgets.QWidget):
         self.ui.setupUi(self)
         self.initSignals()
 
-    def initThreads(self):
+    def initThreads(self) -> None:
+        """
+        Инициализация потоков
+        """
         self.task_scheduler_info = TaskSchedulerInfo()
         self.task_scheduler_info.start()
 
@@ -29,7 +32,10 @@ class Window(QtWidgets.QWidget):
         self.serveses_info = ServecesInfo()
         self.serveses_info.start()
 
-    def initSignals(self):
+    def initSignals(self) -> None:
+        """
+        Инициализация сигналов
+        """
         self.cpu_info.CPUInfoReceived.connect(self.onCPUInfoReceived)
         self.processes_info.ProcessesInfoReceived.connect(self.onProcessesInfoReceived)
         self.serveses_info.ServecesInfoReceived.connect(self.onServecesInfoReceived)
@@ -38,10 +44,16 @@ class Window(QtWidgets.QWidget):
         self.ui.horizontalSliderUpdateRate.sliderReleased.connect(self.changeUpdateRate)
         self.ui.horizontalSliderUpdateRate.valueChanged.connect(lambda v: self.ui.plainTextEdit_updaterate.setPlainText(str(v)))
 
-    def changeUpdateRate(self):
+    def changeUpdateRate(self) -> None:
+        """
+        Изменение скорости обновления информации
+        """
         self.cpu_info.timeout = self.ui.horizontalSliderUpdateRate.value()
 
-    def onCPUInfoReceived(self, info: dict):
+    def onCPUInfoReceived(self, info: dict) -> None:
+        """
+        Получение и отображение информации о процессоре, дисках, памяти.
+        """
         cpu_name, cpu_number, cpu_load = info['cpu']
         self.ui.lcdNumber_cpuload.display(cpu_load)
         self.ui.textEdit_cpubrand.setText(cpu_name)
@@ -59,7 +71,11 @@ class Window(QtWidgets.QWidget):
             self.ui.tableWidget_disks.setItem(i, 2, QTableWidgetItem(f"{total_space} GB"))
             self.ui.tableWidget_disks.setItem(i, 3, QTableWidgetItem(f"{used_space} GB"))
 
-    def onProcessesInfoReceived(self, list_processes: list):
+    def onProcessesInfoReceived(self, list_processes: list) -> None:
+        """
+        Получение и отображение информации о работающих процессах.
+        """
+
         self.ui.tableWidget_processes.setRowCount(len(list_processes))
         for i, process in enumerate(list_processes):
             process_name, process_memory, process_status = process
@@ -67,14 +83,20 @@ class Window(QtWidgets.QWidget):
             self.ui.tableWidget_processes.setItem(i, 1, QTableWidgetItem(process_memory))
             self.ui.tableWidget_processes.setItem(i, 2, QTableWidgetItem(process_status))
 
-    def onServecesInfoReceived(self, list_serveces: list):
+    def onServecesInfoReceived(self, list_serveces: list) -> None:
+        """
+        Получение и отображение информации о работающих службах.
+        """
         self.ui.tableWidget_services.setRowCount(len(list_serveces))
         for i, service in enumerate(list_serveces):
             service_name, service_state = service
             self.ui.tableWidget_services.setItem(i, 0, QTableWidgetItem(service_name))
             self.ui.tableWidget_services.setItem(i, 1, QTableWidgetItem(service_state))
 
-    def onTaskSchedulerInfoReceived(self, list_tasks: list):
+    def onTaskSchedulerInfoReceived(self, list_tasks: list) -> None:
+        """
+        Получение и показ задач, которые запускаются с помощью планировщика задач
+        """
         self.ui.tableWidget_scheduler.setRowCount(len(list_tasks))
         for i, task in enumerate(list_tasks):
             task_name, task_path, task_state, task_next_run_time = task
@@ -83,7 +105,7 @@ class Window(QtWidgets.QWidget):
             self.ui.tableWidget_scheduler.setItem(i, 2, QTableWidgetItem(task_state))
             self.ui.tableWidget_scheduler.setItem(i, 3, QTableWidgetItem(task_path))
 
-    def closeEvent(self, e):
+    def closeEvent(self, e: QtGui.QCloseEvent) -> None:
         self.task_scheduler_info.terminate()
         self.cpu_info.terminate()
         self.processes_info.terminate()
@@ -98,5 +120,6 @@ if __name__ == "__main__":
     window.show()
 
     app.exec()
+
 
 

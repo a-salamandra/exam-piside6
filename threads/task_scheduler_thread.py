@@ -17,7 +17,12 @@ class TaskSchedulerInfo(QtCore.QThread):
         self.timeout = timeout
         self.status = None
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Получение информации о текущих заданиях в планировщике заданий - имя, путь, время след. запуска, статус.
+        Отправка в виде списка.
+
+        """
         self.status = True
 
         while self.status:

@@ -12,7 +12,11 @@ class ProcessesInfo(QtCore.QThread):
         self.timeout = timeout
         self.status = None
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Получение информации о запущенных процессах, их статусе, потребляемой памяти и отправка списком
+
+        """
         self.status = True
 
         while self.status:
